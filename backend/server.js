@@ -70,7 +70,7 @@ server.get("/gemiddelde", customMiddleWare, async (req, res) => {
     }
 
     const totalScore = scores.reduce((acc, row) => acc + row.score, 0);
-    const averageScore = totalScore / scores.length;
+    const averageScore = Math.ceil(totalScore / scores.length);
 
     res.json({ average: averageScore });
   } catch (error) {
