@@ -70,7 +70,7 @@ server.get("/gemiddelde", customMiddleWare, async (req, res) => {
     }
 
     const totalScore = scores.reduce((acc, row) => acc + row.score, 0);
-    const averageScore = totalScore / scores.length;
+    const averageScore = Math.ceil(totalScore / scores.length);
 
     res.json({ average: averageScore });
   } catch (error) {
@@ -78,17 +78,18 @@ server.get("/gemiddelde", customMiddleWare, async (req, res) => {
   }
 });
 
-app.post("/antwoorden", customMiddleWare, async (req, res) => {
+// post endpoint voor het toevoegen van een score
+server.post("/antwoorden", customMiddleWare, async (req, res) => {
   try {
     const conn = await connect();
     const question = await getQuestionOfTheDay(conn);
 
     const { score } = req.body;
 
-    if (typeof score !== "number" || score < 0) {
-      return res
-        .status(400)
-        .json({ message: "Score must be a non-negative number" });
+    if (score === null) {
+      return res.status(400).json({
+        message: "Score cannot be null",
+      });
     }
 
     await conn.query("INSERT INTO antwoorden (vraag_id, score) VALUES (?, ?)", [
