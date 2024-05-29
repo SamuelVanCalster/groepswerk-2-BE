@@ -4,7 +4,7 @@ import cors from "cors";
 import connect from "./db.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
-const port = process.env.API_PORT || 4000;
+const port = process.env.API_PORT || 1234;
 const server = express();
 server.use(morgan("dev"));
 server.use(cors());
