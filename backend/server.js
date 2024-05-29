@@ -4,6 +4,7 @@ import cors from "cors";
 import connect from "./db.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
+const port = process.env.API_PORT || 4000;
 const server = express();
 server.use(morgan("dev"));
 server.use(cors());
@@ -190,6 +191,6 @@ server.post("/antwoorden", customMiddleWare, async (req, res) => {
   }
 });
 
-server.listen(10000, () => {
+server.listen(port, () => {
   console.log("🚀 your server is listening on http://localhost:1234 🤘");
 });
