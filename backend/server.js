@@ -2,11 +2,15 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import connect from "./db.js";
-// import { checkSchema, validationResult } from "express-validator";
+import swaggerUI from "swagger-ui-express";
+import swaggerSpec from "./swagger.js";
 const server = express();
 server.use(morgan("dev"));
 server.use(cors());
 server.use(express.json());
+
+// swagger documentatie toevoegen
+server.use("/api-doc", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 function customMiddleWare(req, res, next) {
   console.log("Deze boodschap werd geplaatst door mijn custom middleware");
@@ -33,7 +37,28 @@ async function getScoresForQuestion(conn, vraagId) {
   return antwoordenResults;
 }
 
-// get endpoint voor de vraag van vandaag
+/**
+ * @swagger
+ * /vraagvanvandaag:
+ *   get:
+ *     summary: Get de vraag van de dag
+ *     responses:
+ *       200:
+ *         description: Vraag van de dag
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 question:
+ *                   type: string
+ *                   example: "wat is jou favorie kleur?"
+ *       404:
+ *         description: er is geen vraag gepland voor vandaag
+ */
 server.get("/vraagvanvandaag", customMiddleWare, async (req, res) => {
   try {
     const conn = await connect();
@@ -44,7 +69,27 @@ server.get("/vraagvanvandaag", customMiddleWare, async (req, res) => {
   }
 });
 
-// get endpoint voor de scores van de vraag van vandaag
+/**
+ * @swagger
+ * /resultaten:
+ *   get:
+ *     summary: Get scores voor de vraag van de dag
+ *     responses:
+ *       200:
+ *         description: Lijst van de scores
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   score:
+ *                     type: integer
+ *                     example: 5
+ *       500:
+ *         description: Internal server error
+ */
 server.get("/resultaten", customMiddleWare, async (req, res) => {
   try {
     const conn = await connect();
@@ -56,7 +101,27 @@ server.get("/resultaten", customMiddleWare, async (req, res) => {
   }
 });
 
-// get endpoint voor het gemiddelde van de scores voor de vraag van vandaag
+/**
+ * @swagger
+ * /gemiddelde:
+ *   get:
+ *     summary: Get de gemiddelde score
+ *     responses:
+ *       200:
+ *         description: De gemiddelde score
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 average:
+ *                   type: integer
+ *                   example: 4
+ *       404:
+ *         description: er zijn geen scores voor de vraag van de dag en er kan geen gemiddelde score verkregen worden
+ *       500:
+ *         description: Internal server error
+ */
 server.get("/gemiddelde", customMiddleWare, async (req, res) => {
   try {
     const conn = await connect();
@@ -78,7 +143,29 @@ server.get("/gemiddelde", customMiddleWare, async (req, res) => {
   }
 });
 
-// post endpoint voor het toevoegen van een score
+/**
+ * @swagger
+ * /antwoorden:
+ *   post:
+ *     summary: Add een score voor de vraag van de dag
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               score:
+ *                 type: integer
+ *                 example: 5
+ *     responses:
+ *       201:
+ *         description: Score is succesvol toegevoegd
+ *       400:
+ *         description: Score kan niet "null" zijn
+ *       500:
+ *         description: Internal server error
+ */
 server.post("/antwoorden", customMiddleWare, async (req, res) => {
   try {
     const conn = await connect();
