@@ -190,6 +190,6 @@ server.post("/antwoorden", customMiddleWare, async (req, res) => {
   }
 });
 
-server.listen(1234, () => {
+server.listen(10000, () => {
   console.log("🚀 your server is listening on http://localhost:1234 🤘");
 });
