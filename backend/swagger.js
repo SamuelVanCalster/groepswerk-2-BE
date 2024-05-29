@@ -10,7 +10,7 @@ const options = {
     },
     servers: [
       {
-        url: "https://groepswerk-2-be.onrender.com",
+        url: "http://localhost:1234",
         description: "Local server",
       },
     ],
